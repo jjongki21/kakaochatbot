@@ -11,9 +11,30 @@ app.get('/', (req, res) => {
 
 // 카카오 웹훅
 app.post('/kakao/webhook', (req, res) => {
-  console.log('Kakao request body:', req.body);
-  // TODO: 여기서 ChatGPT 호출하고 카카오 응답 포맷 맞춰서 보내기
-  res.sendStatus(200);
+  const body = req.body;
+
+  const utterance = body?.userRequest?.utterance?.trim() || '';
+
+  console.log('Kakao request body:', JSON.stringify(body, null, 2));
+  console.log('User utterance:', utterance);
+
+  const replyText = `You says: ${utterance}`;
+
+  const kakaoResponse = {
+    version: "2.0",
+    template: {
+      outputs: [
+        {
+          simpleText: {
+            text: replyText
+          }
+        }
+      ]
+    }
+  };
+
+  // 4. JSON 응답 전송
+  res.json(kakaoResponse);
 });
 
 app.listen(PORT, '0.0.0.0', () => {
