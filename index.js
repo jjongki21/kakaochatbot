@@ -24,9 +24,9 @@ app.post('/kakao/webhook', async (req, res) => {
     const openaiRes = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4.1-mini', // 예시 모델
+        model: 'gpt-4.1-mini',
         messages: [
-          { role: 'system', content: '너는 카카오톡 채널용 한국어 챗봇이야.' },
+          { role: 'system', content: '너는 카카오톡 채널에서 한국어 경산/영주의 관광에 대해 알려주는 도우미 챗봇이야.' },
           { role: 'user', content: utterance }
         ]
       },
