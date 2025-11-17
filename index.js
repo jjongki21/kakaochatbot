@@ -26,7 +26,7 @@ app.post('/kakao/webhook', async (req, res) => {
       {
         model: 'gpt-4.1-mini',
         messages: [
-          { role: 'system', content: '너는 카카오톡 채널에서 한국어 경산/영주의 관광에 대해 알려주는 도우미 챗봇이야.' },
+          { role: 'system', content: '너는 카카오톡 채널에서 한국어 경산/영주의 관광에 대해 알려주는 도우미 챗봇이야.대답은 친근하고 정중하되 짧게 대답해줘.' },
           { role: 'user', content: utterance }
         ]
       },
