@@ -10,15 +10,39 @@ app.get('/', (req, res) => {
 });
 
 // 카카오 웹훅
-app.post('/kakao/webhook', (req, res) => {
-  const body = req.body;
+const axios = require('axios');
 
+app.post('/kakao/webhook', async (req, res) => {
+  const body = req.body;
   const utterance = body?.userRequest?.utterance?.trim() || '';
 
-  console.log('Kakao request body:', JSON.stringify(body, null, 2));
   console.log('User utterance:', utterance);
 
-  const replyText = `You says: ${utterance}`;
+  let replyText = '잠시 후 다시 시도해 주세요.';
+
+  try {
+    const openaiRes = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4.1-mini', // 예시 모델
+        messages: [
+          { role: 'system', content: '너는 카카오톡 채널용 한국어 챗봇이야.' },
+          { role: 'user', content: utterance }
+        ]
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    replyText = openaiRes.data.choices[0].message.content.trim();
+  } catch (err) {
+    console.error('OpenAI error:', err.response?.data || err.message);
+    replyText = 'AI 응답 중 오류가 발생했어요. 나중에 다시 시도해 주세요.';
+  }
 
   const kakaoResponse = {
     version: "2.0",
@@ -33,7 +57,6 @@ app.post('/kakao/webhook', (req, res) => {
     }
   };
 
-  // 4. JSON 응답 전송
   res.json(kakaoResponse);
 });
 
